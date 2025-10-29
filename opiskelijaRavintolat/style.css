@@ -1,0 +1,13 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+#menuContainer {
+  margin-top: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
