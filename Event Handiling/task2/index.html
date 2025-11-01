@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <h1>Restaurants</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody id="restaurant-list">
+        <!-- Rows will be added dynamically -->
+      </tbody>
+    </table>
+
+    <dialog id="restaurant-modal">
+      <h2 id="name"></h2>
+      <p id="address"></p>
+      <p id="postalCode"></p>
+      <p id="city"></p>
+      <p id="phone"></p>
+      <p id="company"></p>
+      <button id="close-modal">Close</button>
+    </dialog>
+  </body>
+</html>
