@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
   getCat,
   getCatById,
@@ -8,8 +9,11 @@ import {
 } from "../controllers/cat-controller.js";
 
 const catRouter = express.Router();
+// for upload.single() to add new file
+const upload = multer({ dest: "uploads/" });
 
-catRouter.route("/").get(getCat).post(postCat);
+// useing middleware upload.single() to add new file:
+catRouter.route("/").get(getCat).post(upload.single("file"), postCat);
 
 catRouter.route("/:id").get(getCatById).put(putCat).delete(deleteCat);
 

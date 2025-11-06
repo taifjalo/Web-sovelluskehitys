@@ -8,8 +8,25 @@ const getCatById = (req, res) => {
 };
 
 const postCat = (req, res) => {
-  const result = addCat(req.body);
-  res.status(201).json({ message: "New cat added.", result });
+  console.log("Form Data:", req.body);
+  console.log("File Data:", req.file);
+
+  if (!req.body || !req.file) {
+    return res.status(400).json({ message: "Missing form or file data" });
+  }
+
+  const { cat_name, weight, owner, birthdate } = req.body;
+  const filename = req.file.filename;
+
+  const result = addCat({
+    cat_name,
+    weight,
+    owner,
+    birthdate,
+    filename,
+  });
+
+  res.status(201).json({ message: "New cat added", result });
 };
 
 const putCat = (req, res) => res.json({ message: "Cat item updated." });
