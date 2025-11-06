@@ -29,6 +29,15 @@ i made already Assignment4 next is Assignment5
 
 ---
 
+
+
+
+AFTER EACH Assignment Pushed:
+git add .
+git commit -m "Add instructions for pushing all assignments to week3"
+git push
+
+
 That’s the **correct and clean structure** for week 3:
 
 ```
