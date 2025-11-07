@@ -1,10 +1,17 @@
 import express from "express";
-import api from "./api/index.js";
+import apiRouter from "./api/index.js";
+import path from "path";
 
 const app = express();
+
+// Middleware to parse JSON and form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1", api);
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
+
+// Main API router
+app.use("/api/v1", apiRouter);
 
 export default app;

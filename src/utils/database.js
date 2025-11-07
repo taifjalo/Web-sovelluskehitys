@@ -12,4 +12,5 @@ const pool = mysql.createPool({
 });
 
 const promisePool = pool.promise();
+
 export default promisePool;
