@@ -39,8 +39,16 @@ const putCat = async (req, res) => {
 };
 
 const deleteCat = async (req, res) => {
-  const result = await removeCat(req.params.id);
-  result ? res.json(result) : res.sendStatus(404);
+  const user = res.locals.user;
+
+  // admin can delete anything
+  if (user.role === "admin") {
+    return res.json(await removeCat(req.params.id, true));
+  }
+
+  // normal user can delete only their own cats
+  const result = await removeCat(req.params.id, false, user.user_id);
+  result ? res.json(result) : res.sendStatus(403);
 };
 
 export { getCat, getCatById, postCat, putCat, deleteCat };

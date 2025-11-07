@@ -33,12 +33,34 @@ const modifyCat = async (data, id) => {
   return result.affectedRows ? { message: "success" } : false;
 };
 
-const removeCat = async (id) => {
+const removeCat = async (id, isAdmin, userId) => {
+  if (isAdmin) {
+    const [result] = await promisePool.execute(
+      "DELETE FROM wsk_cats WHERE cat_id = ?",
+      [id],
+    );
+    return result.affectedRows ? { message: "success" } : false;
+  }
+
+  // normal user: check owner
   const [result] = await promisePool.execute(
-    "DELETE FROM wsk_cats WHERE cat_id = ?",
-    [id],
+    "DELETE FROM wsk_cats WHERE cat_id = ? AND owner = ?",
+    [id, userId],
   );
   return result.affectedRows ? { message: "success" } : false;
 };
 
-export { listAllCats, findCatById, addCat, modifyCat, removeCat };
+const getUserByUsername = async (username) => {
+  const sql = `SELECT * FROM wsk_users WHERE username = ?`;
+  const [rows] = await promisePool.execute(sql, [username]);
+  return rows.length ? rows[0] : false;
+};
+
+export {
+  listAllCats,
+  findCatById,
+  addCat,
+  modifyCat,
+  removeCat,
+  getUserByUsername,
+};
