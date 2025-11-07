@@ -10,16 +10,14 @@ import {
   deleteCat,
 } from "../controllers/cat-controller.js";
 
-const catRouter = express.Router();
-// for upload.single() to add new file
+const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-// useing middleware upload.single() to add new file:
-catRouter
+router
   .route("/")
   .get(getCat)
   .post(upload.single("file"), createThumbnail, postCat);
 
-catRouter.route("/:id").get(getCatById).put(putCat).delete(deleteCat);
+router.route("/:id").get(getCatById).put(putCat).delete(deleteCat);
 
-export default catRouter;
+export default router;
