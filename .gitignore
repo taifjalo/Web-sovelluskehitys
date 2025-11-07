@@ -9,8 +9,10 @@ uploads/*
 logs
 **/*.backup.*
 **/*.back.*
+# Node
+node_modules/
+.env
 
-node_modules
 bower_components
 
 *.sublime*
