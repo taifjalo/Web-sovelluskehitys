@@ -10,7 +10,10 @@ logs
 **/*.backup.*
 **/*.back.*
 
-node_modules
+# Ignore environment and dependencies
+.env
+node_modules/
+
 bower_components
 
 *.sublime*

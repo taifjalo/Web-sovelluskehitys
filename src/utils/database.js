@@ -10,5 +10,11 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
+<<<<<<< HEAD
 const promisePool = pool.promise();
+=======
+
+const promisePool = pool.promise();
+
+>>>>>>> 1e1fd15811a52307dd840e141e9c511351891344
 export default promisePool;
