@@ -8,11 +8,16 @@ const getUserById = (req, res) => {
   user ? res.json(user) : res.sendStatus(404);
 };
 
-const postUser = (req, res) => {
-  req.body.password = bcrypt.hashSync(req.body.password, 10); // sending Hashed passowrd to databass
+const postUser = (req, res, next) => {
+  try {
+    req.body.password = bcrypt.hashSync(req.body.password, 10); // sending Hashed passowrd to databass
 
-  const result = addUser(req.body);
-  res.status(201).json({ message: "New user added.", result });
+    const newId = addUser(req.body);
+    res.status(201).json({ message: "New user added.", user_id: newId });
+  } catch (err) {
+    err.status = 500;
+    next(err);
+  }
 };
 
 const putUser = (req, res) => res.json({ message: "User item updated." });
