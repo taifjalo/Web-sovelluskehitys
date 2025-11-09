@@ -7,8 +7,8 @@ project/
 │ ├─ utils.js // fetchData + helpers
 │ ├─ components.js // render row, modal
 │ ├─ api.js // wrapper calls (getRestaurants, getDailyMenu...)
-│ ├─ auth.js // تسجيل دخول/تسجيل (localStorage / API)
-│ ├─ favorites.js // إدارة المفضلة (localStorage)
+│ ├─ auth.js // Login/Regestir (localStorage / API)
+│ ├─ favorites.js // Favorites ability (localStorage)
 │ ├─ map.js // خريطة (leaflet) - skeleton
 │ └─ app.js // main: event listeners - etc ...
 └─ assets/
