@@ -1,10 +1,9 @@
-// src/components/MediaRow.jsx
 import PropTypes from 'prop-types';
 
 const MediaRow = (props) => {
   const {item} = props;
   return (
-    <tr key={item.media_id}>
+    <tr>
       <td>
         <img src={item.thumbnail} alt={item.title} />
       </td>
