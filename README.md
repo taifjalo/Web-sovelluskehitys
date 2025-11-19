@@ -1,5 +1,7 @@
 # React + Vite
 
+Open Click Link to View (https://users.metropolia.fi/~taifj/wsk-routing/)
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
