@@ -50,11 +50,9 @@ const Home = () => {
           <th>Type</th>
         </thead>
         <tbody>
-
           {mediaArray.map((item) => (
             <MediaRow key={item.media_id} item={item} />
           ))}
-
         </tbody>
       </table>
     </>
