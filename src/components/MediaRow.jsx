@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 const MediaRow = ({item}) => {
   return (
     <tr>
+      <td>{item.username}</td>
       <td>
         <img src={item.thumbnail} alt={item.title} />
       </td>

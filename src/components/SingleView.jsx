@@ -6,6 +6,7 @@ const SingleView = ({item, setSelectedItem}) => {
   return (
     <dialog open>
       <h2>{item.title}</h2>
+      <p>Onwer: {item.username}</p>
       <p>{item.description}</p>
       {item.media_type.startsWith('image') ? (
         <img src={item.filename} alt={item.title} />
