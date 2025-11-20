@@ -3,7 +3,7 @@ import {fetchData} from '../utils/fetchData';
 
 // TODO: add necessary imports
 const useMedia = () => {
-  const [mediaArray, setMediaArray] = useState;
+  const [mediaArray, setMediaArray] = useState([]);
 
   useEffect(() => {
     const getMedia = async () => {
@@ -29,7 +29,7 @@ const useMedia = () => {
     };
 
     getMedia();
-  });
+  }, []);
   return {mediaArray};
 };
 
