@@ -8,7 +8,7 @@ export const restaurantCard = (r) => {
     <div class="desc muted">${r.address ?? ""}</div>
     <div class="actions">
       <button class="btn primary" data-action="menu">Show menu</button>
-      <button class="btn" data-action="fav">❤</button>
+      <button class="btn" data-action="fav">★</button>
       <button class="btn ghost" data-action="map">Map</button>
     </div>
   `;
@@ -22,7 +22,7 @@ export const restaurantModalHtml = (restaurant, menuHtml) => {
       <h2>${restaurant.name}</h2>
       <p class="muted">${restaurant.company} • ${restaurant.city}</p>
       <p>${restaurant.address ?? ""}</p>
-      <h3>Today's menu</h3>
+      <h3>Menu</h3>
       ${menuHtml || "<p class='muted'>No menu available</p>"}
     </div>
   `;

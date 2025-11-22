@@ -5,7 +5,6 @@ export const fetchData = async (url, options = {}) => {
     return await res.json();
   } catch (err) {
     console.error("fetchData error:", err);
-    // bubble the error to caller
     throw err;
   }
 };
