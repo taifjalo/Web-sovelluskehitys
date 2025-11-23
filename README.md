@@ -35,7 +35,7 @@ student-restaurant/
 │  ├─ events.js        ← Custom events (e.g., onFavsChanged)
 │  ├─ favorites.js     ← Favorite helper functions
 │  ├─ map.js           ← Map initialization + Leaflet logic
-└─└─ app.js            ← Main logic, event listeners, page switching
+└─ └─ app.js            ← Main logic, event listeners, page switching
 
 ```
 
@@ -46,8 +46,8 @@ student-restaurant/
 1. Clone the repo:
 
 ```bash
-git clone https://github.com/your-username/student-eats.git
-cd student-eats
+git clone https://github.com/taifjalo/student-retaurants.git
+cd student-retaurants
 ```
 
 2. Open `index.html` in your browser.
