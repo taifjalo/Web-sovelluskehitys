@@ -1,9 +1,17 @@
 import { getRestaurants, getDailyMenu, getWeeklyMenu } from "./api.js";
-import { restaurantCard, restaurantModalHtml } from "./components.js";
-import { registerUser, loginUser, getLoggedUser, logoutUser } from "./auth.js";
-import { getFavs, addFav, removeFav, isFav } from "./favorites.js";
-
+import {
+  registerUser,
+  loginUser,
+  getLoggedUser,
+  logoutUser,
+  saveLoggedUser,
+} from "./auth.js";
 import { initMap } from "./map.js";
+import { getFavs, addFav, removeFav, isFav } from "./favorites.js";
+import { loadProfile } from "./profile.js";
+import { onFavsChanged } from "./events.js";
+import { restaurantCard } from "./components.js";
+import { restaurantModalHtml, attachModalClose } from "./modal.js";
 
 // DOM elements
 const loginForm = document.getElementById("login-form");
@@ -11,7 +19,8 @@ const registerForm = document.getElementById("register-form");
 const loginSection = document.getElementById("login-view");
 const homeSection = document.getElementById("home-view");
 const btnLogin = document.getElementById("btn-login");
-const btnLogout = document.getElementById("btn-logout");
+const btnProfile = document.getElementById("btn-profile");
+const btnLogoutProfile = document.getElementById("btn-logout-profile");
 const btnFavs = document.getElementById("btn-favs");
 
 const grid = document.getElementById("restaurant-grid");
@@ -27,25 +36,30 @@ let viewMode = "day"; // or 'week'
 function updateNav() {
   const user = getLoggedUser();
   if (user) {
-    btnLogout.classList.remove("hidden");
+    btnProfile.classList.remove("hidden");
     btnLogin.classList.add("hidden");
     btnFavs.classList.remove("hidden");
   } else {
-    btnLogout.classList.add("hidden");
+    btnProfile.classList.add("hidden");
     btnLogin.classList.remove("hidden");
     btnFavs.classList.add("hidden");
   }
 }
 
-btnLogout.addEventListener("click", () => {
+btnLogoutProfile.addEventListener("click", () => {
   logoutUser();
-  alert("You have logged out");
+  notify("You have logged out");
   showView("login");
   updateNav();
 });
 
+btnProfile.addEventListener("click", () => {
+  loadProfile();
+  showView("profile");
+});
+
 // ---------------- Show views ----------------
-function showView(name) {
+export function showView(name) {
   document
     .getElementById("home-view")
     .classList.toggle("hidden", name !== "home");
@@ -58,6 +72,12 @@ function showView(name) {
   document
     .getElementById("map-view")
     .classList.toggle("hidden", name !== "map");
+  document
+    .getElementById("profile-view")
+    .classList.toggle("hidden", name !== "profile");
+  document
+    .getElementById("controls-wrapper")
+    .classList.toggle("hidden", !(name === "home" || name === "favs"));
 }
 
 // ---------------- Switch login/register forms ----------------
@@ -73,28 +93,46 @@ document.getElementById("show-login").addEventListener("click", (e) => {
 });
 
 // ---------------- Handle login/register ----------------
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("email").value.trim();
+
+  const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
-  if (loginUser(email, password)) {
-    alert("Welcome back!");
+
+  if (await loginUser(username, password)) {
+    notify("Welcome back!");
     showView("home");
     updateNav();
   }
 });
 
-registerForm.addEventListener("submit", (e) => {
+registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("reg-email").value.trim();
+  const username = document.getElementById("name").value.trim();
   const password = document.getElementById("reg-password").value.trim();
-  if (registerUser(name, email, password)) {
-    alert("Registration successful!");
+  const email = document.getElementById("reg-email").value.trim();
+
+  const ok = await registerUser(username, email, password);
+
+  if (ok) {
     registerForm.classList.add("hidden");
     loginForm.classList.remove("hidden");
   }
 });
+
+// ---------------- Login Notification container ----------------
+export function notify(message, duration = 3000) {
+  const notif = document.getElementById("notification");
+  if (!notif) return;
+
+  notif.textContent = message;
+  notif.classList.remove("hidden");
+
+  // Hide after duration
+  setTimeout(() => {
+    notif.classList.add("hidden");
+  }, duration);
+}
 
 // ---------------- Load & render restaurants ----------------
 async function loadRestaurants(companyFilter = "", q = "") {
@@ -108,18 +146,19 @@ async function loadRestaurants(companyFilter = "", q = "") {
       if (
         q &&
         !(
-          (r.name || "").toLowerCase().includes(q) ||
-          (r.city || "").toLowerCase().includes(q)
+          (r.name || "").toLowerCase().includes(q.toLowerCase()) ||
+          (r.city || "").toLowerCase().includes(q.toLowerCase())
         )
       )
         return false;
       return true;
     });
+
     grid.innerHTML = "";
     if (filtered.length === 0) homeEmpty.classList.remove("hidden");
     else {
       homeEmpty.classList.add("hidden");
-      filtered.forEach((r) => grid.appendChild(restaurantCard(r)));
+      filtered.forEach((r) => grid.appendChild(restaurantCard(r, isFav)));
     }
   } catch (err) {
     console.error(err);
@@ -127,12 +166,19 @@ async function loadRestaurants(companyFilter = "", q = "") {
   }
 }
 
+onFavsChanged(() => {
+  loadRestaurants();
+  renderFavs();
+});
+
 // ---------------- Restaurant card actions ----------------
 grid.addEventListener("click", async (e) => {
   const card = e.target.closest(".product");
   if (!card) return;
+
   const id = card.dataset.id;
   const action = e.target.dataset.action;
+
   if (action === "menu") {
     try {
       const menu =
@@ -144,38 +190,38 @@ grid.addEventListener("click", async (e) => {
           : `<ul>${courses
               .map((c) => `<li>${c.name} (${c.price ?? "N/A"})</li>`)
               .join("")}</ul>`;
-      modal.innerHTML = restaurantModalHtml(
-        restaurants.find((r) => r._id === id),
-        html
-      );
+
+      const restaurant = restaurants.find((r) => r._id === id);
+      modal.innerHTML = restaurantModalHtml(restaurant, html);
+      attachModalClose(modal); // automatically attaches close button listener
       modal.showModal();
-      document
-        .getElementById("close-modal")
-        .addEventListener("click", () => modal.close());
     } catch (err) {
       console.error(err);
-      modal.innerHTML = `<div class="dialog-content"><p class='muted'>Failed to load menu.</p><div class="close-row"><button id="close-modal" class="btn">Close</button></div></div>`;
+      modal.innerHTML = `
+        <div class="dialog-content">
+          <p class='muted'>Failed to load menu.</p>
+          <div class="close-row">
+            <button id="close-modal" class="btn">Close</button>
+          </div>
+        </div>
+      `;
+      attachModalClose(modal);
       modal.showModal();
-      document
-        .getElementById("close-modal")
-        .addEventListener("click", () => modal.close());
     }
   } else if (action === "fav") {
     const user = getLoggedUser();
     if (!user) {
-      alert("This feature only for registered people! ❤");
+      notify("This feature only for registered people! ❤");
       return;
     }
-
     if (isFav(id)) {
       removeFav(id);
-      e.target.textContent = "★";
+      e.target.textContent = "🤍";
     } else {
       addFav(id);
-      e.target.textContent = "❤";
+      e.target.textContent = "💛";
     }
-
-    renderFavs(); // Update favorites view if open
+    renderFavs();
   } else if (action === "map") {
     showView("map");
     initMap(restaurants);
@@ -184,26 +230,92 @@ grid.addEventListener("click", async (e) => {
 
 // ---------------- Favorites renderer ----------------
 function renderFavs() {
-  const favIds = getFavs(); // Get favorite restaurant IDs of logged-in user
+  const favIds = getFavs();
   favsList.innerHTML = "";
 
-  if (favIds.length === 0) {
+  if (!favIds.length) {
     favsEmpty.classList.remove("hidden");
-  } else {
-    favsEmpty.classList.add("hidden");
-    favIds.forEach((id) => {
-      const r = restaurants.find((x) => x._id === id);
-      if (r) favsList.appendChild(restaurantCard(r));
-    });
+    return;
   }
+
+  favsEmpty.classList.add("hidden");
+
+  favIds.forEach((id) => {
+    const r = restaurants.find((x) => String(x._id) === String(id));
+    if (!r) return;
+
+    const card = restaurantCard(r, isFav);
+    favsList.appendChild(card);
+  });
 }
+
+// ---------------- Favorites actions ----------------
+favsList.addEventListener("click", async (e) => {
+  const card = e.target.closest(".product");
+  if (!card) return;
+  const id = card.dataset.id;
+  const action = e.target.dataset.action;
+
+  // ❤️ Toggle favorite
+  if (action === "fav") {
+    if (isFav(id)) {
+      removeFav(id);
+      e.target.textContent = "🤍";
+    } else {
+      addFav(id);
+      e.target.textContent = "💛";
+    }
+    renderFavs();
+    return;
+  }
+
+  // 📋 Menu
+  if (action === "menu") {
+    try {
+      const menu =
+        viewMode === "day" ? await getDailyMenu(id) : await getWeeklyMenu(id);
+      const courses = menu?.courses ?? [];
+      const html =
+        courses.length === 0
+          ? "<p class='muted'>No menu</p>"
+          : `<ul>${courses
+              .map((c) => `<li>${c.name} (${c.price ?? "N/A"})</li>`)
+              .join("")}</ul>`;
+
+      const restaurant = restaurants.find((x) => x._id === id);
+      modal.innerHTML = restaurantModalHtml(restaurant, html);
+      attachModalClose(modal); // standardized close button handling
+      modal.showModal();
+    } catch (err) {
+      console.error(err);
+      modal.innerHTML = `
+        <div class="dialog-content">
+          <p class='muted'>Error loading menu</p>
+          <div class="close-row">
+            <button id="close-modal" class="btn">Close</button>
+          </div>
+        </div>
+      `;
+      attachModalClose(modal);
+      modal.showModal();
+    }
+    return;
+  }
+
+  // 🗺 Map
+  if (action === "map") {
+    showView("map");
+    initMap(restaurants);
+  }
+});
 
 // ---------------- Controls ----------------
 document.getElementById("filter-company").addEventListener("change", (e) => {
   loadRestaurants(
-    e.target.value,
+    document.getElementById("filter-company").value,
     document.getElementById("search").value.toLowerCase()
   );
+  renderFavs();
 });
 document.getElementById("search").addEventListener("input", (e) => {
   loadRestaurants(
@@ -233,9 +345,12 @@ document.getElementById("btn-favs").addEventListener("click", () => {
 document
   .getElementById("btn-login")
   .addEventListener("click", () => showView("login"));
-document
-  .getElementById("btn-map")
-  .addEventListener("click", () => showView("map"));
+
+document.getElementById("btn-map").addEventListener("click", async () => {
+  showView("map");
+  if (restaurants.length === 0) await loadRestaurants(); // make sure data is loaded
+  initMap(restaurants); // now pass real restaurant data
+});
 
 // ---------------- Initial load ----------------
 window.addEventListener("DOMContentLoaded", async () => {
