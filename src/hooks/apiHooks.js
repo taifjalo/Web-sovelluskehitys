@@ -1,7 +1,6 @@
 import {useState, useEffect} from 'react';
 import {fetchData} from '../utils/fetchData';
 
-// TODO: add necessary imports
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
 
@@ -33,4 +32,37 @@ const useMedia = () => {
   return {mediaArray};
 };
 
-export {useMedia};
+const postLogin = async (inputs) => {
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(inputs),
+  };
+
+  const loginResult = await fetchData(
+    import.meta.env.VITE_AUTH_API + '/auth/login',
+    fetchOptions,
+  );
+  return loginResult;
+};
+
+const postRegister = async (inputs) => {
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(inputs),
+  };
+
+  const registerResult = await fetchData(
+    import.meta.env.VITE_AUTH_API + '/users',
+    fetchOptions,
+  );
+  return registerResult;
+};
+
+// تصدير الدوال بشكل صحيح
+export {useMedia, postLogin, postRegister};

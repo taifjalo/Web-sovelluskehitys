@@ -5,6 +5,7 @@ import Profile from './views/Profile';
 import Upload from './views/Upload';
 import Single from './views/Single';
 import Login from './views/Login';
+import Register from './views/Register';
 import Logout from './views/Logout';
 
 const App = () => (
@@ -16,6 +17,7 @@ const App = () => (
         <Route path="/upload" element={<Upload />} />
         <Route path="/single" element={<Single />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/logout" element={<Logout />} />
       </Route>
     </Routes>
