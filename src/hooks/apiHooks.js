@@ -32,37 +32,36 @@ const useMedia = () => {
   return {mediaArray};
 };
 
-const postLogin = async (inputs) => {
-  const fetchOptions = {
+export const postLogin = async (inputs) => {
+  console.log('Posting login with:', inputs);
+  return await fetchData(`${import.meta.env.VITE_AUTH_API}/auth/login`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(inputs),
-  };
-
-  const loginResult = await fetchData(
-    import.meta.env.VITE_AUTH_API + '/auth/login',
-    fetchOptions,
-  );
-  return loginResult;
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(inputs), // inputs يجب أن يكون {username, password}
+  });
 };
 
-const postRegister = async (inputs) => {
-  const fetchOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(inputs),
-  };
+export const postRegister = async (inputs) => {
+  console.log('Posting register with:', inputs); // debug
 
-  const registerResult = await fetchData(
-    import.meta.env.VITE_AUTH_API + '/users',
-    fetchOptions,
-  );
-  return registerResult;
+  return await fetchData(`${import.meta.env.VITE_AUTH_API}/users`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(inputs),
+  });
 };
 
-// تصدير الدوال بشكل صحيح
-export {useMedia, postLogin, postRegister};
+export const useAuthentication = () => {
+  return {postLogin, postRegister};
+};
+
+export const useUser = () => {
+  const getUserByToken = async (token) => {
+    return await fetchData(`${import.meta.env.VITE_AUTH_API}/users/user`, {
+      headers: {Authorization: `Bearer ${token}`},
+    });
+  };
+  return {getUserByToken};
+};
+
+export {useMedia};

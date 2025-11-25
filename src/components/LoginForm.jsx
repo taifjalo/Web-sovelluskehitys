@@ -1,52 +1,33 @@
-import React from 'react';
-import useForm from '../hooks/formHooks';
-import {postLogin} from '../hooks/apiHooks';
+import {useState} from 'react';
+import {useUserContext} from '../hooks/contextHooks';
 
 const LoginForm = () => {
-  const initValues = {
-    username: '',
-    password: '',
+  const [inputs, setInputs] = useState({username: '', password: ''});
+  const {handleLogin} = useUserContext();
+
+  const doLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await handleLogin(inputs);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const {inputs, handleInputChange, handleSubmit} = useForm(
-    doLogin,
-    initValues,
-  );
-
-  async function doLogin() {
-    const result = await postLogin(inputs);
-    console.log('Login result:', result);
-
-    if (result.token) {
-      localStorage.setItem('token', result.token);
-      window.location.href = '/';
-    }
-  }
-
-  console.log(inputs);
-
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="loginuser">Username</label>
-        <input
-          name="username"
-          type="text"
-          id="loginuser"
-          onChange={handleInputChange}
-          value={inputs.username}
-        />
-      </div>
-      <div>
-        <label htmlFor="loginpassword">Password</label>
-        <input
-          name="password"
-          type="password"
-          id="loginpassword"
-          onChange={handleInputChange}
-          value={inputs.password}
-        />
-      </div>
+    <form onSubmit={doLogin}>
+      <input
+        type="text"
+        placeholder="Username"
+        value={inputs.username}
+        onChange={(e) => setInputs({...inputs, username: e.target.value})}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={inputs.password}
+        onChange={(e) => setInputs({...inputs, password: e.target.value})}
+      />
       <button type="submit">Login</button>
     </form>
   );

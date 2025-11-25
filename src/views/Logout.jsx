@@ -1,16 +1,22 @@
-import React from 'react';
+import {useUserContext} from '../hooks/contextHooks';
 
 const Logout = () => {
+  const {handleLogout} = useUserContext();
   // Handle logout logic (clearing the token or user data)
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/';
+
+  const userLogout = async () => {
+    try {
+      await handleLogout();
+    } catch (e) {
+      alert(e.message);
+    }
   };
+  console.log();
 
   return (
     <div>
       <h2>Logout</h2>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={userLogout}>Logout</button>
     </div>
   );
 };

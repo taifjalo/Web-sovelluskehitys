@@ -1,6 +1,7 @@
 import React from 'react';
 import useForm from '../hooks/formHooks';
 import {postRegister} from '../hooks/apiHooks';
+import {useNavigate} from 'react-router-dom';
 
 const RegisterForm = () => {
   const initValues = {
@@ -9,18 +10,29 @@ const RegisterForm = () => {
     email: '',
   };
 
+  const navigate = useNavigate();
+
   const {inputs, handleInputChange, handleSubmit} = useForm(
     doRegister,
     initValues,
   );
 
   async function doRegister() {
-    const result = await postRegister(inputs);
-    console.log(result);
+    try {
+      const result = await postRegister(inputs);
+      console.log('Registration result:', result);
 
-    if (result.id) {
-      alert('Registration successful! Please log in.');
-      window.location.href = '/login';
+      if (result.id) {
+        alert('Registration successful! Please log in.');
+        // Use navigate instead of window.location.href for SPA navigation
+        navigate('/login');
+      } else {
+        // Handle API errors if returned differently
+        alert(result.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(error.message || 'Something went wrong during registration');
     }
   }
 
@@ -34,6 +46,8 @@ const RegisterForm = () => {
           id="registeruser"
           onChange={handleInputChange}
           value={inputs.username}
+          required
+          minLength={3}
         />
       </div>
       <div>
@@ -44,6 +58,7 @@ const RegisterForm = () => {
           id="registeremail"
           onChange={handleInputChange}
           value={inputs.email}
+          required
         />
       </div>
       <div>
@@ -54,6 +69,8 @@ const RegisterForm = () => {
           id="registerpassword"
           onChange={handleInputChange}
           value={inputs.password}
+          required
+          minLength={5}
         />
       </div>
       <button type="submit">Register</button>

@@ -1,15 +1,28 @@
-const fetchData = async (url, options = {}) => {
-  // console.log('fetching data from url: ', url);
-  const response = await fetch(url, options);
-  const json = await response.json();
-  if (!response.ok) {
-    // console.log('json', json);
-    if (json.message) {
-      throw new Error(json.message);
-    }
-    throw new Error(`Error ${response.status} occured`);
-  }
-  return json;
-};
+// utils/fetchData.js
+export const fetchData = async (url, options = {}) => {
+  try {
+    console.log('Fetching URL:', url);
+    console.log('Options:', options);
 
-export {fetchData};
+    const response = await fetch(url, options);
+
+    const contentType = response.headers.get('content-type');
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      data = {message: text};
+    }
+
+    if (!response.ok) {
+      console.error('API Error:', url, data);
+      throw new Error(data.message || 'Request failed');
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Fetch failed:', url, err);
+    throw err;
+  }
+};
