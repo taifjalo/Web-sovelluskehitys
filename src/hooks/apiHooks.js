@@ -1,17 +1,16 @@
 import {useState, useEffect} from 'react';
 import {fetchData} from '../utils/fetchData';
 
-const useMedia = () => {
+// ---- Media Hooks ----
+export const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
 
   useEffect(() => {
     const getMedia = async () => {
       try {
-        // Fetch all media items
         const mediaUrl = import.meta.env.VITE_MEDIA_API + '/media';
         const mediaItems = await fetchData(mediaUrl);
 
-        // Fetch user info for each media item
         const mediaWithUsers = await Promise.all(
           mediaItems.map(async (item) => {
             const userUrl =
@@ -29,21 +28,20 @@ const useMedia = () => {
 
     getMedia();
   }, []);
+
   return {mediaArray};
 };
 
+// ---- Authentication ----
 export const postLogin = async (inputs) => {
-  console.log('Posting login with:', inputs);
   return await fetchData(`${import.meta.env.VITE_AUTH_API}/auth/login`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(inputs), // inputs يجب أن يكون {username, password}
+    body: JSON.stringify(inputs),
   });
 };
 
 export const postRegister = async (inputs) => {
-  console.log('Posting register with:', inputs); // debug
-
   return await fetchData(`${import.meta.env.VITE_AUTH_API}/users`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -51,10 +49,9 @@ export const postRegister = async (inputs) => {
   });
 };
 
-export const useAuthentication = () => {
-  return {postLogin, postRegister};
-};
+export const useAuthentication = () => ({postLogin, postRegister});
 
+// ---- User ----
 export const useUser = () => {
   const getUserByToken = async (token) => {
     return await fetchData(`${import.meta.env.VITE_AUTH_API}/users/user`, {
@@ -64,4 +61,54 @@ export const useUser = () => {
   return {getUserByToken};
 };
 
-export {useMedia};
+// ---- File Upload ----
+export const useFile = () => {
+  const postFile = async (file, token) => {
+    const formData = new FormData();
+    const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    formData.append('file', file, sanitizedFilename);
+
+    const fileData = await fetchData(
+      `${import.meta.env.VITE_UPLOAD_SERVER}/upload`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      },
+    );
+
+    return fileData;
+  };
+
+  return {postFile};
+};
+
+// ---- Media Metadata ----
+export const postMedia = async (fileData, inputs, token) => {
+  const mediaPayload = {
+    title: inputs.title,
+    description: inputs.description,
+    filename: fileData.filename.replace(/[^a-zA-Z0-9.-]/g, '_'),
+    media_type: fileData.media_type,
+    filesize: Number(fileData.filesize),
+  };
+
+  const response = await fetch(`${import.meta.env.VITE_MEDIA_API}/media`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(mediaPayload),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    console.error('MEDIA API ERROR:', error);
+    throw new Error('Media metadata upload failed');
+  }
+
+  return await response.json();
+};
