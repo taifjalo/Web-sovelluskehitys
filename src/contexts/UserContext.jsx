@@ -1,46 +1,79 @@
-import {createContext, useState} from 'react';
+import {createContext, useState, useEffect} from 'react';
 import {useAuthentication, useUser} from '../hooks/apiHooks';
-import {useNavigate, useLocation} from 'react-router';
+import {useNavigate} from 'react-router';
 
 const UserContext = createContext(null);
 
 const UserProvider = ({children}) => {
   const [user, setUser] = useState(null);
+
   const {postLogin} = useAuthentication();
   const {getUserByToken} = useUser();
-  const navigate = useNavigate();
-  const location = useLocation();
 
+  const navigate = useNavigate();
+  //const location = useLocation();
+
+  // ------------------------
+  // LOGIN
+  // ------------------------
   const handleLogin = async (credentials) => {
     try {
       const loginResult = await postLogin(credentials);
+
+      if (!loginResult.token) {
+        throw new Error('Login failed: Token missing');
+      }
+
+      // Save token
       localStorage.setItem('token', loginResult.token);
+
+      // Save user
       setUser(loginResult.user);
-      navigate('/'); // navigate to home after login
+
+      navigate('/'); // Go home
     } catch (e) {
       console.error('Login failed:', e.message);
       throw e;
     }
   };
 
+  // ------------------------
+  // LOGOUT
+  // ------------------------
   const handleLogout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    navigate('/login'); // navigate to login page after logout
+    navigate('/login');
   };
 
+  // ------------------------
+  // AUTO LOGIN
+  // ------------------------
   const handleAutoLogin = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (token) {
-        const userResult = await getUserByToken(token);
+
+      if (!token) return; // No token → skip autologin
+
+      const userResult = await getUserByToken(token);
+
+      if (userResult?.user) {
         setUser(userResult.user);
-        navigate(location.pathname); // stay on current page
+        return;
       }
+
+      // If API returned error / invalid token
+      localStorage.removeItem('token');
     } catch (e) {
       console.log('AUTOLOGIN ERROR:', e.message);
+      localStorage.removeItem('token'); // prevent infinite errors
     }
   };
+
+  // Run autologin on app start
+  useEffect(() => {
+    handleAutoLogin();
+  }, []);
 
   return (
     <UserContext.Provider
