@@ -19,15 +19,12 @@ const Upload = () => {
       const token = localStorage.getItem('token');
       if (!file) throw new Error('No file selected');
 
-      // 1️⃣ رفع الملف
       const fileData = await postFile(file, token);
       console.log('FILE RESPONSE:', fileData);
 
-      // 2️⃣ رفع الـ media metadata
       const mediaData = await postMedia(fileData.data, inputs, token);
       console.log('MEDIA RESPONSE:', mediaData);
 
-      // 3️⃣ إعادة التوجيه
       navigate('/');
     } catch (e) {
       console.error('Upload failed:', e.message);
