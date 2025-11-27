@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Test Pizzeria</title>
+	<meta name="description"
+		content="Authentic pizzeria in the city center offering wood-fired Margherita, Diavola, and special pizzas for dine-in and takeaway.">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Inline critical CSS for faster FCP/LCP -->
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			background-color: #f7f2e9;
+		}
+
+		header {
+			background: linear-gradient(135deg, #b91515, #ff7c39);
+			color: #fff;
+			padding: 16px 24px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		}
+
+		.header-inner {
+			max-width: 1100px;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+		}
+
+		.logo {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.logo-circle {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: radial-gradient(circle at 30% 30%, #ffe38b, #f8b63c);
+			border: 2px solid #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			font-size: 1.1rem;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 1.8rem;
+			letter-spacing: 0.03em;
+		}
+
+		.tagline {
+			font-size: 0.9rem;
+			margin-top: 4px;
+			opacity: 0.9;
+		}
+
+		nav {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
+
+		nav a,
+		nav button {
+			text-decoration: none;
+			color: #fff;
+			font-size: 0.9rem;
+			padding: 6px 10px;
+			border-radius: 999px;
+			border: 1px solid rgba(255, 255, 255, 0.5);
+			background-color: rgba(0, 0, 0, 0.1);
+			cursor: pointer;
+		}
+
+		nav a:hover,
+		nav button:hover {
+			background-color: rgba(0, 0, 0, 0.25);
+		}
+
+		main {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 24px 16px 56px;
+		}
+
+		.layout {
+			display: grid;
+			grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+			gap: 24px;
+			align-items: flex-start;
+		}
+
+		section {
+			margin-bottom: 48px;
+		}
+
+		.hero {
+			margin: 16px 0;
+			border-radius: 16px;
+			overflow: hidden;
+			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+		}
+
+		.hero img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 568/376;
+			object-fit: cover;
+		}
+
+		.home-text {
+			background: #fff9eb;
+			border-radius: 12px;
+			padding: 16px 18px;
+			border: 1px solid #f1d9a2;
+		}
+
+		.home-text h1 {
+			margin-top: 0;
+			font-size: 1.6rem;
+			color: #b91515;
+		}
+
+		.low-contrast {
+			color: #555;
+			background-color: #fff;
+			font-size: 14px;
+			padding: 8px 10px;
+			border-radius: 8px;
+			border: 1px dashed #ddd;
+			margin-top: 12px;
+		}
+
+		.promo-sidebar {
+			background: #fff;
+			border-radius: 16px;
+			padding: 14px 16px;
+			border: 1px solid #f1d9a2;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+			contain: layout style;
+		}
+
+		.promo-sidebar h2 {
+			margin-top: 0;
+			font-size: 1.1rem;
+			color: #b91515;
+		}
+
+		.promo-pill {
+			display: inline-block;
+			margin-top: 8px;
+			padding: 4px 8px;
+			border-radius: 999px;
+			font-size: 0.8rem;
+			background: #ffe38b;
+		}
+
+		.highlight {
+			color: #b91515;
+			font-weight: 600;
+		}
+
+		.section-card {
+			background: #fff;
+			border-radius: 16px;
+			padding: 18px 18px 20px;
+			border: 1px solid #f1d9a2;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+		}
+
+		.menu-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+			gap: 16px;
+		}
+
+		.menu-item {
+			border-radius: 14px;
+			border: 1px solid #f1d9a2;
+			padding: 12px;
+			background: #fffdf5;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+		}
+
+		.menu-item img {
+			width: 100%;
+			aspect-ratio: 400/250;
+			border-radius: 10px;
+			display: block;
+		}
+
+		.menu-item h3 {
+			margin: 0;
+			font-size: 1.1rem;
+			color: #b91515;
+		}
+
+		.price {
+			font-weight: 600;
+			color: #333;
+		}
+
+		.menu-item button {
+			align-self: flex-start;
+			margin-top: 4px;
+			padding: 7px 12px;
+			border-radius: 999px;
+			border: none;
+			cursor: pointer;
+			font-size: 0.9rem;
+			background-color: #b91515;
+			color: #fff;
+		}
+
+		footer {
+			padding: 18px 16px;
+			background: #222;
+			color: #f2f2f2;
+			font-size: 0.85rem;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<div class="header-inner">
+			<div class="logo">
+				<div class="logo-circle">TP</div>
+				<div>
+					<h1>Test Pizzeria</h1>
+					<div class="tagline">Wood-fired slices in the heart of the city</div>
+				</div>
+			</div>
+			<nav>
+				<a href="#home">Home</a>
+				<a href="#about">Learn more about our pizzeria</a>
+				<a href="#menu">View our menu</a>
+				<a href="#contact">Contact</a>
+				<button onclick="openEnglish()">In English</button>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<div class="layout">
+			<div>
+				<section id="home">
+					<div class="hero">
+						<img src="https://www.surfsidepizza.com/wp-content/uploads/2025/01/Pizza-homepage-placeholder-scaled.jpg"
+							alt="Fresh pizza with quality ingredients" loading="lazy" decoding="async">
+					</div>
+					<div class="home-text">
+						<h1>Authentic Metropolitan-Style Pizza</h1>
+						<p>Welcome to <span class="highlight">Test Pizzeria</span>, your cozy neighborhood pizza place.
+							Fresh dough, slow-rise crust, wood-fired oven.</p>
+						<p class="low-contrast">Try our daily specials and seasonal pizzas crafted with quality
+							ingredients.</p>
+						<p>Want to explore our pizzas? Click <a href="#menu">here for the menu</a> or <a
+								href="#contact">contact us</a>.</p>
+					</div>
+				</section>
+			</div>
+
+			<aside class="promo-sidebar">
+				<h2>Today's Specials</h2>
+				<p><strong>Lunch offer:</strong> any pizza + soft drink for <span class="highlight">9,90 €</span>.</p>
+				<span class="promo-pill">2x points for web dev students</span>
+			</aside>
+		</div>
+
+		<section id="menu" class="section-card">
+			<h2>Pizzeria Menu</h2>
+			<div class="menu-grid">
+				<article class="menu-item">
+					<h3>Margherita Classica</h3>
+					<img src="https://placehold.co/400x250" alt="Margherita pizza with fresh mozzarella and basil">
+					<span class="price">9,90 €</span>
+					<button onclick="alert('Added Margherita to cart')">Add to Cart</button>
+				</article>
+				<article class="menu-item">
+					<h3>Diavola Hot</h3>
+					<img src="https://placehold.co/400x250" alt="Spicy Diavola pizza">
+					<span class="price">11,90 €</span>
+					<button onclick="alert('Added Diavola to cart')">Add to Cart</button>
+				</article>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<p>© 2025 Test Pizzeria</p>
+	</footer>
+
+	<script>
+		function openEnglish() {
+			alert('Switch to English version');
+		}
+	</script>
+</body>
+
+</html>
