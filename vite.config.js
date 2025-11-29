@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%205%20tehtavat/tailwind/',
+  base: '/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%206%20tehtavat/tailwind/',
   server: {
     proxy: {
       '/api': {

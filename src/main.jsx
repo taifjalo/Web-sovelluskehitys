@@ -7,7 +7,7 @@ import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%205%20tehtavat/tailwind/">
+    <BrowserRouter basename="/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%206%20tehtavat/tailwind/">
       <UserProvider>
         <App />
       </UserProvider>

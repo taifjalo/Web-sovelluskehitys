@@ -1,6 +1,6 @@
 # React + Vite
 
-Click Link to View (https://users.metropolia.fi/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%205%20tehtavat/tailwind/)
+Click Link to View (https://users.metropolia.fi/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%206%20tehtavat/tailwind/)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
