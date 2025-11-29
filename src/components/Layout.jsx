@@ -12,35 +12,63 @@ const Layout = () => {
 
   return (
     <div>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
+      <nav className="p-4 bg-white shadow">
+        <ul className="flex items-center list-none m-0 p-0 space-x-4">
+          <li className="group">
+            <Link
+              to="/"
+              className="text-gray-800 px-2 py-1 hover:text-teal-400"
+            >
+              Home
+            </Link>
           </li>
 
-          {/* will apear if user loged in */}
           {user && (
             <>
-              <li>
-                <Link to="/profile">Profile</Link>
+              <li className="group">
+                <Link
+                  to="/profile"
+                  className="text-gray-800 px-2 py-1 hover:text-teal-400"
+                >
+                  Profile
+                </Link>
               </li>
-              <li>
-                <Link to="/upload">Upload</Link>
+              <li className="group">
+                <Link
+                  to="/upload"
+                  className="text-gray-800 px-2 py-1 hover:text-teal-400"
+                >
+                  Upload
+                </Link>
               </li>
-              <li>
-                <Link to="/logout">Logout</Link>
+              <li className="group">
+                <Link
+                  to="/logout"
+                  className="text-gray-800 px-2 py-1 hover:text-teal-400"
+                >
+                  Logout
+                </Link>
               </li>
             </>
           )}
 
-          {/* will apear if user didn't login*/}
           {!user && (
             <>
-              <li>
-                <Link to="/login">Login</Link>
+              <li className="group">
+                <Link
+                  to="/login"
+                  className="text-gray-800 px-2 py-1 hover:text-teal-400"
+                >
+                  Login
+                </Link>
               </li>
-              <li>
-                <Link to="/register">Register</Link>
+              <li className="group">
+                <Link
+                  to="/register"
+                  className="text-gray-800 px-2 py-1 hover:text-teal-400"
+                >
+                  Register
+                </Link>
               </li>
             </>
           )}
