@@ -52,12 +52,14 @@ export const postRegister = async (inputs) => {
 export const useAuthentication = () => ({postLogin, postRegister});
 
 // ---- User ----
+
 export const useUser = () => {
   const getUserByToken = async (token) => {
-    return await fetchData(`${import.meta.env.VITE_AUTH_API}/users/user`, {
+    return await fetchData(`${import.meta.env.VITE_AUTH_API}/users/token`, {
       headers: {Authorization: `Bearer ${token}`},
     });
   };
+
   return {getUserByToken};
 };
 
@@ -155,4 +157,62 @@ export const modifyMedia = async (id, newData, token) => {
   } catch (error) {
     console.error('Error fetching media with user info:', error);
   }
+};
+
+export const useLikes = () => {
+  const baseUrl = import.meta.env.VITE_MEDIA_API + '/likes';
+
+  const getLikeCountByMediaId = async (mediaId) => {
+    const response = await fetchData(`${baseUrl}/count/${mediaId}`);
+    if (!response.ok) return 0;
+    const json = await response.json();
+    return json.length;
+  };
+
+  const getLikeByUser = async (userId) => {
+    const token = localStorage.getItem('token');
+    const url = userId ? `${baseUrl}/byuser/${userId}` : `${baseUrl}/byuser`;
+    const response = await fetchData(url, {
+      headers: {Authorization: `Bearer ${token}`},
+    });
+    if (!response.ok) return [];
+    return await response.json();
+  };
+
+  const getLikeByMedia = async (mediaId) => {
+    const response = await fetchData(`${baseUrl}/bymedia/${mediaId}`);
+    if (!response.ok) return null;
+    return await response.json();
+  };
+
+  const postLike = async (mediaId) => {
+    const token = localStorage.getItem('token');
+    const res = await fetchData(baseUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({media_id: mediaId}),
+    });
+    if (!res.ok) throw new Error('Failed to post like');
+    return await res.json();
+  };
+
+  const deleteLike = async (likeId) => {
+    const token = localStorage.getItem('token');
+    const res = await fetchData(`${baseUrl}/${likeId}`, {
+      method: 'DELETE',
+      headers: {Authorization: `Bearer ${token}`},
+    });
+    return res.ok;
+  };
+
+  return {
+    postLike,
+    deleteLike,
+    getLikeCountByMediaId,
+    getLikeByUser,
+    getLikeByMedia,
+  };
 };

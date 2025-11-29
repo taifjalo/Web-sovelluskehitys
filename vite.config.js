@@ -7,4 +7,13 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/~taifj/Web-sovelluskehitys%20TX00EY23-3009/Viikon%205%20tehtavat/tailwind/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://media2.edu.metropolia.fi/media-api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

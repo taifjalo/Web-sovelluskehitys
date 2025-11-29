@@ -4,6 +4,7 @@ import {useUserContext} from '../hooks/contextHooks';
 import {deleteMedia, modifyMedia} from '../hooks/apiHooks';
 
 const MediaRow = ({item, setSelectedItem}) => {
+  console.log(MediaRow);
   const {user} = useUserContext();
   const navigate = useNavigate();
 
