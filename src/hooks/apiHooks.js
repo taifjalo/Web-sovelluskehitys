@@ -112,3 +112,47 @@ export const postMedia = async (fileData, inputs, token) => {
 
   return await response.json();
 };
+
+export const deleteMedia = async (id, token) => {
+  try {
+    const response = await fetchData(
+      `${import.meta.env.VITE_MEDIA_API}/media/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to delete media');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching media with user info:', error);
+  }
+};
+
+export const modifyMedia = async (id, newData, token) => {
+  try {
+    const response = await fetchData(
+      `${import.meta.env.VITE_MEDIA_API}/media/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newData),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to Update media');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching media with user info:', error);
+  }
+};
